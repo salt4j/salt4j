@@ -1,4 +1,4 @@
-package com.googlecode.sugar4j;
+package salt4j;
 
 import java.util.AbstractCollection;
 import java.util.Iterator;
@@ -135,14 +135,6 @@ abstract public class Sequence<E> extends AbstractCollection<E> {
             }
         };
     }
-
-    //ZIP2:
-    public static<E, F> Sequence<Tuple2<E,F>> zip2(final Iterable<E> it1, final Iterable<F> it2) {
-        return new Sequence<Tuple2<E,F>>(){
-            public Stream iterator() { return Stream.zip2(it1.iterator(), it2.iterator()); }
-        };
-    }
-    public <F> Sequence<Tuple2<E,F>> zip2 (Iterable<F> it2) { return zip2(this, it2); }
 
     //SUM:
     public static Number sum(Iterable<Number> it) { return Stream.sum(it.iterator()); }

@@ -1,4 +1,4 @@
-package com.googlecode.sugar4j;
+package salt4j;
 
 import java.util.Collection;
 

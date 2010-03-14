@@ -1,4 +1,4 @@
-package com.googlecode.sugar4j;
+package salt4j;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -211,17 +211,6 @@ abstract public class Stream<E> implements Iterator<E> {
             }
         };
     }
-
-    //ZIP2:
-    public static<E, F> Stream<Tuple2<E,F>> zip2(final Iterator<E> i1, final Iterator<F> i2) {
-        return new Stream<Tuple2<E,F>>() {
-            public Tuple2<E,F> produce() {
-                if (i1.hasNext() && i2.hasNext()) return new Tuple2<E,F>(i1.next(), i2.next());
-                else return null;
-            }
-        };
-    }
-    public <F> Stream<Tuple2<E,F>> zip2 (Iterator<F> it2) { return zip2(this, it2); }
 
     //SUM:
     public static Number sum(Iterator<Number> iterator) {
