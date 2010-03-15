@@ -1,7 +1,8 @@
-package salt4j;
+package salt;
 
 import java.util.AbstractCollection;
 import java.util.Iterator;
+import salt.util.NumStream;
 
 /**
  * A collection of useful static methods that transform Iterators and Iterables lazily.
@@ -37,17 +38,6 @@ abstract public class Sequence<E> extends AbstractCollection<E> {
     // SIZE:
     public static <E> int size(Iterable<E> iterable) { return Stream.size(iterable.iterator()); }
     public int size() { return size(this); }
-
-    //RANGE:
-
-    public static Sequence<Integer> range(final int begin, final int end, final int step) {
-        return new Sequence<Integer>() {
-            public Stream<Integer> iterator() { return Stream.range(begin, end, step);  }
-        };
-    }
-    public static Sequence<Integer> range(int begin, int end) { return range(begin, end, 1); }
-    public static Sequence<Integer> range(int end) { return range(0, end, 1); }
-    public static Sequence<Integer> range() { return range(0, Integer.MAX_VALUE, 1); }
 
     //JOIN:
     public static String join(Iterable iterable, String delimiter) {
@@ -136,65 +126,6 @@ abstract public class Sequence<E> extends AbstractCollection<E> {
         };
     }
 
-    //SUM:
-    public static Number sum(Iterable<Number> it) { return Stream.sum(it.iterator()); }
-    public Number sum() { return sum((Iterable<Number>)this); }
-
-    //PRODUCT:
-    public static Number product(Iterable<Number> it) {return Stream.product(it.iterator());}
-    public Number product() { return product((Iterable<Number>)this); }
-
-    //AVERAGE:
-    public static Number average(Iterable<Number> it) {return Stream.average(it.iterator());}
-    public Number average() { return average((Iterable<Number>)this); }
-
-    //PLUS:
-    public static Sequence<Double> plus(final Iterable<? extends Number> first,
-            final Iterable<? extends Number> second) {
-        return new Sequence<Double>() {
-            public Stream<Double> iterator() { return Stream.plus(first.iterator(), second.iterator()); }
-        };
-    }
-
-    public Sequence<Double> plus(final Iterable<? extends Number> other) {
-        return plus((Iterable<Number>)this, other);
-    }
-
-    //MINUS:
-    public static Sequence<Double> minus(final Iterable<? extends Number> first,
-            final Iterable<? extends Number> second) {
-        return new Sequence<Double>() {
-            public Stream<Double> iterator() { return Stream.minus(first.iterator(), second.iterator()); }
-        };
-    }
-
-    public Sequence<Double> minus(final Iterable<? extends Number> other) {
-        return minus((Iterable<Number>)this, other);
-    }
-
-    //TIMES:
-    public static Sequence<Double> times(final Iterable<? extends Number> first,
-            final Iterable<? extends Number> second) {
-        return new Sequence<Double>() {
-            public Stream<Double> iterator() { return Stream.times(first.iterator(), second.iterator()); }
-        };
-    }
-
-    public Sequence<Double> times(final Iterable<? extends Number> other) {
-        return times((Iterable<Number>)this, other);
-    }
-
-    //OVER:
-    public static Sequence<Double> over(final Iterable<? extends Number> first,
-            final Iterable<? extends Number> second) {
-        return new Sequence<Double>() {
-            public Stream<Double> iterator() { return Stream.over(first.iterator(), second.iterator()); }
-        };
-    }
-
-    public Sequence<Double> over(final Iterable<? extends Number> other) {
-        return over((Iterable<Number>)this, other);
-    }
 
     //MAX:
     public static <E extends Comparable> E max(Iterable<E> it) {return Stream.max(it.iterator());}

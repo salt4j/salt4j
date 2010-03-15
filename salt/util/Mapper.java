@@ -1,10 +1,12 @@
-package salt4j;
+package salt.util;
 
 import java.util.Iterator;
+import salt.Sequence;
+import salt.Stream;
 
 /**
  * A class for transforming an Iterable/Iterator into another Iterable/Iterator.
- * You can create a mapper by overriding the map() function.
+ * It can also be combined with lastValue() to reduce an iterable to a value
  * @author Seun Osewa
  */
 abstract public class Mapper<X, Y> {

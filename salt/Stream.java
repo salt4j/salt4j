@@ -1,4 +1,4 @@
-package salt4j;
+package salt;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -67,27 +67,7 @@ abstract public class Stream<E> implements Iterator<E> {
 
     //ISEMPTY
     public boolean isEmpty() { return !this.hasNext(); }
-    
-    //RANGE:
-    public static Stream<Integer> range(final int begin, final int end, final int step) {
-        if (step > 0) return new Stream<Integer>() {
-            int current = begin;
-            public Integer produce() {
-                if (current < end) { final int v = current; current += step; return v; }
-                else return null;
-            }
-        };
-        else return new Stream<Integer>() {
-            int current = begin;
-            public Integer produce() {
-                if (current > end) { final int v = current; current += step; return v; }
-                else return null;
-            }
-        };
-    }
-    public static Stream<Integer> range(int begin, int end) { return range(begin, end, 1); }
-    public static Stream<Integer> range(int end) { return range(0, end, 1); }
-    public static Stream<Integer> range() { return range(0, Integer.MAX_VALUE, 1); }
+
 
     //JOIN:
     public static String join(Iterator iterator, String delimiter) {
@@ -211,90 +191,6 @@ abstract public class Stream<E> implements Iterator<E> {
         };
     }
 
-    //SUM:
-    public static Number sum(Iterator<Number> iterator) {
-        double sum = 0;
-        while(iterator.hasNext()) sum += iterator.next().doubleValue();
-        return sum;
-    }
-    public Number sum() { return sum((Iterator<Number>)this); }
-
-    //PRODUCT:
-    public static Number product(Iterator<Number> iterator) {
-        double product = 0;
-        while(iterator.hasNext()) product *= iterator.next().doubleValue();
-        return product;
-    }
-    public Number product() { return product((Iterator<Number>)this); }
-
-    //AVERAGE:
-    public static Number average(Iterator<Number> iterator) {
-        double sum = 0; int n = 0;
-        while(iterator.hasNext()) { sum += iterator.next().doubleValue(); n += 1; }
-        return sum / n;
-    }
-    public Number average() { return average((Iterator<Number>)this); }
-
-
-    //PLUS:
-    public static Stream<Double> plus(final Iterator<? extends Number> first,
-            final Iterator<? extends Number> second) {
-        return new Stream<Double>() {
-            public Double produce() {
-                if (!(first.hasNext() && second.hasNext())) return null;
-                return first.next().doubleValue() + second.next().doubleValue();
-            }
-        };
-    }
-
-    public Stream<Double> plus(final Iterator<? extends Number> iterator) {
-        return Stream.plus((Iterator<? extends Number>)this, iterator);
-    }
-    
-    //MINUS:
-    public static Stream<Double> minus(final Iterator<? extends Number> first,
-            final Iterator<? extends Number> second) {
-        return new Stream<Double>() {
-            public Double produce() {
-                if (!(first.hasNext() && second.hasNext())) return null;
-                return first.next().doubleValue() - second.next().doubleValue();
-            }
-        };
-    }
-
-    public Stream<Double> minus(final Iterator<? extends Number> iterator) {
-        return Stream.minus((Iterator<? extends Number>)this, iterator);
-    }
-
-    //TIMES:
-    public static Stream<Double> times(final Iterator<? extends Number> first,
-            final Iterator<? extends Number> second) {
-        return new Stream<Double>() {
-            public Double produce() {
-                if (!(first.hasNext() && second.hasNext())) return null;
-                return first.next().doubleValue() * second.next().doubleValue();
-            }
-        };
-    }
-
-    public Stream<Double> times(final Iterator<? extends Number> iterator) {
-        return Stream.times(iterator, (Iterator<? extends Number>)this);
-    }
-
-    //OVER:
-    public static Stream<Double> over(final Iterator<? extends Number> first,
-            final Iterator<? extends Number> second) {
-        return new Stream<Double>() {
-            public Double produce() {
-                if (!(first.hasNext() && second.hasNext())) return null;
-                return first.next().doubleValue() / second.next().doubleValue();
-            }
-        };
-    }
-
-    public Stream<Double> over(final Iterator<? extends Number> iterator) {
-        return Stream.over(iterator, (Iterator<? extends Number>)this);
-    }
 
     //MAX:
     public static <E extends Comparable> E max(Iterator<E> iterator) {
