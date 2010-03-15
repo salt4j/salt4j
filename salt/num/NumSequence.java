@@ -1,4 +1,4 @@
-package salt.util;
+package salt.num;
 
 import salt.Sequence;
 

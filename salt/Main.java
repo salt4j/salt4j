@@ -1,5 +1,5 @@
 package salt;
-import salt.util.NumSequence;
+import salt.num.NumSequence;
 import static java.lang.System.out;
 /**
  * Various tests. Not part of the official API.
@@ -7,7 +7,7 @@ import static java.lang.System.out;
  */
 public class Main {
     public static void main(String[] args) {
-        NumSequence<Integer>s = salt.util.NumSequence.range();
+        NumSequence<Integer>s = salt.num.NumSequence.range();
         out.println(s.times(Sequence.repeat(10)).take(10));
     }
 }

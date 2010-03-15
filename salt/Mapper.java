@@ -1,8 +1,6 @@
-package salt.util;
+package salt;
 
 import java.util.Iterator;
-import salt.Sequence;
-import salt.Stream;
 
 /**
  * A class for transforming an Iterable/Iterator into another Iterable/Iterator.

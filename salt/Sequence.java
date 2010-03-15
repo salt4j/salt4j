@@ -2,7 +2,7 @@ package salt;
 
 import java.util.AbstractCollection;
 import java.util.Iterator;
-import salt.util.NumStream;
+import salt.num.NumStream;
 
 /**
  * A collection of useful static methods that transform Iterators and Iterables lazily.
