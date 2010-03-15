@@ -28,8 +28,8 @@ abstract public class Stream<E> implements Iterator<E> {
         else throw new NoSuchElementException();
     }
 
-    /** */
-    final public E lastVal() {
+    /** Exhaust the iterator and return the last value. */
+    final public E lastValue() {
         //E buf = null; while(hasNext()) buf = next(); return buf;
         E localBuf = null;
         for(;;) {
