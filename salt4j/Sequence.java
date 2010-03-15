@@ -148,6 +148,54 @@ abstract public class Sequence<E> extends AbstractCollection<E> {
     public static Number average(Iterable<Number> it) {return Stream.average(it.iterator());}
     public Number average() { return average((Iterable<Number>)this); }
 
+    //PLUS:
+    public static Sequence<Double> plus(final Iterable<? extends Number> first,
+            final Iterable<? extends Number> second) {
+        return new Sequence<Double>() {
+            public Stream<Double> iterator() { return Stream.plus(first.iterator(), second.iterator()); }
+        };
+    }
+
+    public Sequence<Double> plus(final Iterable<? extends Number> other) {
+        return plus((Iterable<Number>)this, other);
+    }
+
+    //MINUS:
+    public static Sequence<Double> minus(final Iterable<? extends Number> first,
+            final Iterable<? extends Number> second) {
+        return new Sequence<Double>() {
+            public Stream<Double> iterator() { return Stream.minus(first.iterator(), second.iterator()); }
+        };
+    }
+
+    public Sequence<Double> minus(final Iterable<? extends Number> other) {
+        return minus((Iterable<Number>)this, other);
+    }
+
+    //TIMES:
+    public static Sequence<Double> times(final Iterable<? extends Number> first,
+            final Iterable<? extends Number> second) {
+        return new Sequence<Double>() {
+            public Stream<Double> iterator() { return Stream.times(first.iterator(), second.iterator()); }
+        };
+    }
+
+    public Sequence<Double> times(final Iterable<? extends Number> other) {
+        return times((Iterable<Number>)this, other);
+    }
+
+    //OVER:
+    public static Sequence<Double> over(final Iterable<? extends Number> first,
+            final Iterable<? extends Number> second) {
+        return new Sequence<Double>() {
+            public Stream<Double> iterator() { return Stream.over(first.iterator(), second.iterator()); }
+        };
+    }
+
+    public Sequence<Double> over(final Iterable<? extends Number> other) {
+        return over((Iterable<Number>)this, other);
+    }
+
     //MAX:
     public static <E extends Comparable> E max(Iterable<E> it) {return Stream.max(it.iterator());}
     public<F extends Comparable> F max() { return max((Iterable<F>)this); }
@@ -156,22 +204,13 @@ abstract public class Sequence<E> extends AbstractCollection<E> {
     public static <E extends Comparable> E min(Iterable<E> it) {return Stream.min(it.iterator());}
     public<F extends Comparable> F min() { return min((Iterable<F>)this); }
 
-    //SPLIT:
-    /*
-    public static<E> Sequence<Sequence<E>> split(final Iterable<E> iterable, final int size) {
-        return new Sequence<Sequence<E>>() {
-            public Stream<Sequence<E>> iterator() { return Stream.split(iterable.iterator(), size); }
-        };
-    }
-    public Sequence<Sequence<E>> split (final int size) { return split(this, size); }
-     */
-
     //REPEAT:
     public static <E> Sequence<E> repeat(final E item, final int n) {
         return new Sequence<E>() {
             public Stream<E> iterator() { return Stream.repeat(item, n); }
         };
     }
+    public static <E> Sequence<E> repeat(final E item) { return repeat(item, Integer.MAX_VALUE); }
 
     //CONCAT:
     public static<E> Sequence<E> concat(Iterable<E>... iterables) {

@@ -28,7 +28,7 @@ abstract public class Stream<E> implements Iterator<E> {
         else throw new NoSuchElementException();
     }
 
-    /** Exhaust the iterator and return the last value. */
+    /** Exhaust the iterator and return the last value. Empty iterator returns null*/
     final public E lastValue() {
         //E buf = null; while(hasNext()) buf = next(); return buf;
         E localBuf = null;
@@ -235,6 +235,67 @@ abstract public class Stream<E> implements Iterator<E> {
     }
     public Number average() { return average((Iterator<Number>)this); }
 
+
+    //PLUS:
+    public static Stream<Double> plus(final Iterator<? extends Number> first,
+            final Iterator<? extends Number> second) {
+        return new Stream<Double>() {
+            public Double produce() {
+                if (!(first.hasNext() && second.hasNext())) return null;
+                return first.next().doubleValue() + second.next().doubleValue();
+            }
+        };
+    }
+
+    public Stream<Double> plus(final Iterator<? extends Number> iterator) {
+        return Stream.plus((Iterator<? extends Number>)this, iterator);
+    }
+    
+    //MINUS:
+    public static Stream<Double> minus(final Iterator<? extends Number> first,
+            final Iterator<? extends Number> second) {
+        return new Stream<Double>() {
+            public Double produce() {
+                if (!(first.hasNext() && second.hasNext())) return null;
+                return first.next().doubleValue() - second.next().doubleValue();
+            }
+        };
+    }
+
+    public Stream<Double> minus(final Iterator<? extends Number> iterator) {
+        return Stream.minus((Iterator<? extends Number>)this, iterator);
+    }
+
+    //TIMES:
+    public static Stream<Double> times(final Iterator<? extends Number> first,
+            final Iterator<? extends Number> second) {
+        return new Stream<Double>() {
+            public Double produce() {
+                if (!(first.hasNext() && second.hasNext())) return null;
+                return first.next().doubleValue() * second.next().doubleValue();
+            }
+        };
+    }
+
+    public Stream<Double> times(final Iterator<? extends Number> iterator) {
+        return Stream.times(iterator, (Iterator<? extends Number>)this);
+    }
+
+    //OVER:
+    public static Stream<Double> over(final Iterator<? extends Number> first,
+            final Iterator<? extends Number> second) {
+        return new Stream<Double>() {
+            public Double produce() {
+                if (!(first.hasNext() && second.hasNext())) return null;
+                return first.next().doubleValue() / second.next().doubleValue();
+            }
+        };
+    }
+
+    public Stream<Double> over(final Iterator<? extends Number> iterator) {
+        return Stream.over(iterator, (Iterator<? extends Number>)this);
+    }
+
     //MAX:
     public static <E extends Comparable> E max(Iterator<E> iterator) {
         if (iterator.hasNext()) {
@@ -261,17 +322,6 @@ abstract public class Stream<E> implements Iterator<E> {
     }
     public<F extends Comparable> E min() { return (E)min((Iterator<F>)this); }
 
-    //SPLIT:
-    public static<E> Stream<Stream<E>> split(final Iterator<E> iterator, final int size) {
-        return new Stream<Stream<E>>() {
-            public Stream<E> produce() {
-                if (iterator.hasNext()) return take(iterator, size);
-                else return null;
-            }
-        };
-    }
-    public Stream<Stream<E>> split (final int size) { return split(this, size); }
-
     //REPEAT:
     public static <E> Stream<E> repeat(final E item, final int num) {
         return new Stream<E>() {
@@ -281,6 +331,7 @@ abstract public class Stream<E> implements Iterator<E> {
             }
         };
     }
+    public static <E> Stream<E> repeat(final E item) { return repeat(item, Integer.MAX_VALUE); }
 
     //CONCAT:
     public static<E> Stream<E> concat(final Iterator<E>... iterators) {
