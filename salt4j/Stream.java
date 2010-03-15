@@ -15,35 +15,34 @@ abstract public class Stream<E> implements Iterator<E> {
      */
     abstract public E produce();
     
-    //IGNORE THESE:
-    private E buffer = null; private boolean buffered = false;
+    //THE FOLOWING FUNCTIONS IMPLEMENT THE ITERATOR INTERFACE:
+    private E buffer = null;
+
     final public boolean hasNext() {
-        if (buffered) return true;
-        else {
-            buffer = produce();
-            if (buffer != null) { buffered = true; return true; }
-            else return false;
-        }
+        if (buffer != null) return true;
+        else { buffer = produce(); return buffer != null; }
     }
+
     final public E next() {
-        if (buffered || hasNext()) { buffered = false; return buffer; }
+        if ((buffer != null) || hasNext()) { final E r = buffer; buffer = null; return r; }
         else throw new NoSuchElementException();
     }
 
-    final public E lastValue() { E buf = null; while(hasNext()) buf = next(); return buf; }
+    /** */
+    final public E lastVal() {
+        //E buf = null; while(hasNext()) buf = next(); return buf;
+        E localBuf = null;
+        for(;;) {
+            final E buf = produce();
+            if (buf != null) localBuf = buf; else return localBuf;
+        }
+    }
 
     /**
      *  To implement remove() correctly, check whether buffered is true.
      *  if it is, true an exception or remove the former element if possible.
      */
     public void remove() { throw new UnsupportedOperationException(); }
-
-    /** So streams can be used with Java's foreach loop. */
-    boolean iterated = false;
-    public Iterator<E> iterator() {
-        if (iterated) throw new RuntimeException("iterator() already returned once.");
-        else { iterated = true; return this; }
-    }
 
     /**
      *  Wrap an Iterator in a Stream to take advantage of syntactic sugar.
@@ -340,7 +339,7 @@ abstract public class Stream<E> implements Iterator<E> {
         }
 
         if (!iterator.hasNext()) {
-            return new Sequence<E>() { public Stream<E> iterator() { return Stream.wrap(iterator); } };
+            return Sequence.repeat(null, 0);
         } else return new TeeSequence(new Node());
     }
     public Sequence<E> toSequence() { return toSequence(this); }
