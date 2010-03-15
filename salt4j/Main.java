@@ -9,7 +9,6 @@ public class Main {
     public static void main(String[] args) {
         Sequence<Integer>s = Sequence.range();
         
-        
-        out.println(Sequence.repeat(10).times(s.skip(10)).take(10));
+        out.println(s.skip(10).times(5).take(10));
     }
 }

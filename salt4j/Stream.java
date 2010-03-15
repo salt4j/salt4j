@@ -212,28 +212,28 @@ abstract public class Stream<E> implements Iterator<E> {
     }
 
     //SUM:
-    public static Number sum(Iterator<Number> iterator) {
+    public static Number sum(Iterator<? extends Number> iterator) {
         double sum = 0;
         while(iterator.hasNext()) sum += iterator.next().doubleValue();
         return sum;
     }
-    public Number sum() { return sum((Iterator<Number>)this); }
+    public Number sum() { return sum((Iterator<? extends Number>)this); }
 
     //PRODUCT:
-    public static Number product(Iterator<Number> iterator) {
+    public static Number product(Iterator<? extends Number> iterator) {
         double product = 0;
         while(iterator.hasNext()) product *= iterator.next().doubleValue();
         return product;
     }
-    public Number product() { return product((Iterator<Number>)this); }
+    public Number product() { return product((Iterator<? extends Number>)this); }
 
     //AVERAGE:
-    public static Number average(Iterator<Number> iterator) {
+    public static Number average(Iterator<? extends Number> iterator) {
         double sum = 0; int n = 0;
         while(iterator.hasNext()) { sum += iterator.next().doubleValue(); n += 1; }
         return sum / n;
     }
-    public Number average() { return average((Iterator<Number>)this); }
+    public Number average() { return average((Iterator<? extends Number>)this); }
 
 
     //PLUS:
@@ -246,10 +246,10 @@ abstract public class Stream<E> implements Iterator<E> {
             }
         };
     }
-
     public Stream<Double> plus(final Iterator<? extends Number> iterator) {
         return Stream.plus((Iterator<? extends Number>)this, iterator);
     }
+    public Stream<Double> plus(Number value) { return plus(repeat(value)); }
     
     //MINUS:
     public static Stream<Double> minus(final Iterator<? extends Number> first,
@@ -261,10 +261,10 @@ abstract public class Stream<E> implements Iterator<E> {
             }
         };
     }
-
     public Stream<Double> minus(final Iterator<? extends Number> iterator) {
         return Stream.minus((Iterator<? extends Number>)this, iterator);
     }
+    public Stream<Double> minus(Number value) { return minus(repeat(value)); }
 
     //TIMES:
     public static Stream<Double> times(final Iterator<? extends Number> first,
@@ -276,10 +276,12 @@ abstract public class Stream<E> implements Iterator<E> {
             }
         };
     }
-
     public Stream<Double> times(final Iterator<? extends Number> iterator) {
         return Stream.times(iterator, (Iterator<? extends Number>)this);
     }
+    public Stream<Double> times(Number value) { return times(repeat(value)); }
+
+
 
     //OVER:
     public static Stream<Double> over(final Iterator<? extends Number> first,
@@ -295,6 +297,7 @@ abstract public class Stream<E> implements Iterator<E> {
     public Stream<Double> over(final Iterator<? extends Number> iterator) {
         return Stream.over(iterator, (Iterator<? extends Number>)this);
     }
+    public Stream<Double> over(Number value) { return over(repeat(value)); }
 
     //MAX:
     public static <E extends Comparable> E max(Iterator<E> iterator) {
