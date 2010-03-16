@@ -1,6 +1,8 @@
 package salt4j;
 
 import java.util.Iterator;
+import salt4j.Sequence;
+import salt4j.Stream;
 
 /**
  * A class for transforming an Iterable/Iterator into another Iterable/Iterator.

@@ -1,5 +1,4 @@
 package salt4j;
-import java.util.Iterator;
 import static java.lang.System.out;
 /**
  * Various tests. Not part of the official API.

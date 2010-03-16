@@ -2,6 +2,8 @@ package salt4j;
 
 import java.util.AbstractCollection;
 import java.util.Iterator;
+import salt4j.tuples.Tuple2;
+import salt4j.tuples.Tuple3;
 
 /**
  * A collection of useful static methods that transform Iterators and Iterables lazily.
@@ -13,7 +15,8 @@ abstract public class Sequence<E> extends AbstractCollection<E> {
 
     //WRAP: Create an Sequence from an existing collection or iterator.
     public static <E> Sequence<E> wrap(final Iterable<E> source) {
-        return new Sequence<E>() {
+        if (source instanceof Sequence) return (Sequence<E>)source;
+        else return new Sequence<E>() {
             public Stream<E> iterator() { return Stream.wrap(source.iterator()); }
         };
     }
@@ -136,6 +139,25 @@ abstract public class Sequence<E> extends AbstractCollection<E> {
         };
     }
 
+    //ZIP2:
+    public static <A, B> Sequence<Tuple2<A,B>> zip2(final Iterable<A> ita, final Iterable<B> itb) {
+        return new Sequence<Tuple2<A, B>>() {
+            public Stream<Tuple2<A, B>> iterator() { return Stream.zip2(ita.iterator(), itb.iterator()); }
+        };
+    }
+    public <F> Sequence<Tuple2<E, F>> zip2(final Iterable<F> other) { return zip2(this, other); }
+
+    //ZIP3:
+    public static <A, B, C> Sequence<Tuple3<A, B, C>> zip3(final Iterable<A> ita, final Iterable<B> itb,
+            final Iterable<C> itc) {
+        return new Sequence<Tuple3<A, B, C>>() {
+            public Stream<Tuple3<A, B, C>> iterator() {
+                return Stream.zip3(ita.iterator(), itb.iterator(), itc.iterator());
+            }
+        };
+    }
+    public <F, G> Sequence<Tuple3<E, F, G>> zip3(Iterable<F> f, Iterable<G> g) { return zip3(this, f, g); }
+
     //SUM:
     public static Number sum(Iterable<? extends Number> it) { return Stream.sum(it.iterator()); }
     public Number sum() { return sum((Iterable<? extends Number>)this); }
@@ -213,11 +235,11 @@ abstract public class Sequence<E> extends AbstractCollection<E> {
     public static <E> Sequence<E> repeat(final E item) { return repeat(item, Integer.MAX_VALUE); }
 
     //CONCAT:
-    public static<E> Sequence<E> concat(Iterable<E>... iterables) {
-        final Iterator<E>[] iterators = new Iterator[iterables.length];
-        for(int i = 0; i<iterables.length;i++) iterators[i] = iterables[i].iterator();
+    public static<E> Sequence<E> concat(final Iterable<E>... iterables) {
         return new Sequence<E>() {
             public Stream<E> iterator() {
+                final Iterator<E>[] iterators = new Iterator[iterables.length];
+                for(int i = 0; i<iterables.length;i++) iterators[i] = iterables[i].iterator();
                 return Stream.concat(iterators);
             }
         };

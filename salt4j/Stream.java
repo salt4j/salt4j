@@ -2,6 +2,8 @@ package salt4j;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import salt4j.tuples.Tuple2;
+import salt4j.tuples.Tuple3;
 
 /**
  * A helper class to make creating read-only iterators easy. You only have to implement
@@ -209,6 +211,33 @@ abstract public class Stream<E> implements Iterator<E> {
                 return row;
             }
         };
+    }
+
+    //ZIP2:
+    public static <A, B> Stream<Tuple2<A,B>> zip2(final Iterator<A> ita, final Iterator<B> itb) {
+        return new Stream<Tuple2<A, B>>() {
+            public Tuple2<A, B> produce() {
+                if (ita.hasNext() && itb.hasNext()) {
+                    return new Tuple2<A, B>(ita.next(), itb.next());
+                } else return null;
+            }
+        };
+    }
+    public<F> Stream<Tuple2<E,F>> zip2(final Iterator<F> other) { return zip2(this, other); }
+
+    //ZIP3:
+    public static <A, B, C> Stream<Tuple3<A, B, C>> zip3(final Iterator<A> ita, final Iterator<B> itb,
+            final Iterator<C> iterc) {
+        return new Stream<Tuple3<A, B, C>>() {
+            public Tuple3<A, B, C> produce() {
+                if (ita.hasNext() && itb.hasNext() && iterc.hasNext()) {
+                    return new Tuple3<A, B, C>(ita.next(), itb.next(), iterc.next());
+                } else return null;
+            }
+        };
+    }
+    public<F,G> Stream<Tuple3<E,F,G>> zip3(final Iterator<F> otherf, Iterator<G> otherg) {
+        return zip3(this, otherf, otherg);
     }
 
     //SUM:
