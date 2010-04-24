@@ -188,11 +188,19 @@ public class Db {
     }
     static Charset UTF8 = Charset.forName("UTF-8");
     
-    public static String getUTF(java.sql.ResultSet rs, int i) throws java.sql.SQLException {
+    /*
+     * Usage: Db.getUTF(rs, column) instead of rs.getString(column);
+     */
+    public static String getUTF8(java.sql.ResultSet rs, String fieldName) throws java.sql.SQLException {
+        return new String(rs.getBytes(fieldName), UTF8);
+    }
+
+    public static String getUTF8(java.sql.ResultSet rs, int i) throws java.sql.SQLException {
         return new String(rs.getBytes(i), UTF8);
     }
 
-    public static String getUTF(java.sql.ResultSet rs, String fieldName) throws java.sql.SQLException {
-        return new String(rs.getBytes(fieldName), UTF8);
-    }
+    /** 
+     * db.exec(query, setUTF("name")) instead of db.exec(query, "name")
+     */
+    public static byte[] setUTF8(String string) { return string.getBytes(UTF8); }
 }

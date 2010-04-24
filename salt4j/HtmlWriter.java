@@ -54,7 +54,7 @@ public class HtmlWriter {
 
     public HtmlWriter flush() throws IOException { writer.flush(); return this; }
 
-    public String getString() throws IOException { writer.flush(); return bytes.toString(); }
+    public String getString() throws IOException { writer.flush(); return bytes.toString("UTF-8"); }
 
     public byte[] getBytes() throws IOException { writer.flush(); return bytes.toByteArray(); }
     
