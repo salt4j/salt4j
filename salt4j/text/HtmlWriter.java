@@ -1,19 +1,20 @@
-package salt4j;
+package salt4j.text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
-import java.sql.SQLException;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringEscapeUtils;
+import salt4j.cache.HashCache;
 
 /**
  * Write buffer some unicode text and write it to the web.  Provides simple formatting.
  */
 public class HtmlWriter {
-    public static Charset UTF8 = Charset.forName("UTF-8");
+    protected final static Charset UTF8 = Charset.forName("UTF-8");
+    protected final static HashCache<String, byte[]> viewCache = new HashCache<String, byte[]>();
 
     final ByteArrayOutputStream bytes = new ByteArrayOutputStream(1024);
     final Writer writer = new OutputStreamWriter(bytes, UTF8);
@@ -63,40 +64,5 @@ public class HtmlWriter {
         if (response.getContentType() == null) response.setContentType("text/html;charset=UTF-8");
         response.setContentLength(bytes.size());
         bytes.writeTo(response.getOutputStream());
-    }
-    
-    //FRAGMENT CACHING:
-    protected static transient boolean NO_CACHE = false;
-    protected final static Cache cache = Cache.GLOBAL;
-
-    /**
-     * A class to make caching of html fragments easy.
-     * Subclass newWriter() globally and subclass generate() locally.
-     */
-    abstract public class AbstractCacheWrapper<E extends HtmlWriter> {
-        abstract protected E generate(E writer) throws SQLException, IOException;
-        abstract protected E newWriter();
-
-        final String key; final E dest;
-        public AbstractCacheWrapper(String key, E dest) {this.key = key; this.dest=dest;}
-
-        public E get() throws SQLException, IOException {
-            try {
-                if (NO_CACHE) return generate(dest);
-                else {
-                    //by storing UTF8 bytes directly we can save ram and skip the conversion step.
-                    byte[] htmlBytes;
-                    synchronized (cache) {
-                        htmlBytes = cache.get(key);
-                        if (htmlBytes == null) {
-                            htmlBytes = generate(newWriter()).getBytes();
-                            cache.put(key, htmlBytes);
-                        }
-                    }
-                    dest.writeBytes(htmlBytes); return dest;
-                }
-            } catch (SQLException e) { throw e; }
-            catch (IOException e) { throw e; }
-        }
     }
 }

@@ -1,5 +1,6 @@
 package salt4j;
 
+import salt4j.core.Lazy;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,7 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-/** You must use a database that supports transactions: e.g MySQL innodb, sqlite, Postgresql, JavaDB. */
+/** You must use a database that supports serializable transactions: e.g Innodb, SQL Server. */
 public class Db {
     Connection connection;
 
@@ -119,7 +120,7 @@ public class Db {
 
     private Lazy<ResultSet> lazyQuery(final PreparedStatement p) {
         return new Lazy<ResultSet>() {
-            ResultSet compute() throws SQLException {
+            public ResultSet compute() throws SQLException {
                 dirty = true; updateLastActive();
                 p.executeQuery(); return p.getResultSet();
             }
@@ -171,7 +172,7 @@ public class Db {
 
         public Lazy<Db> lazyTake() {
             return new Lazy<Db>() {
-                Db compute() throws Exception { return take(); }
+                public Db compute() throws SQLException { return take(); }
             };
         }
 
@@ -200,7 +201,7 @@ public class Db {
     }
 
     /** 
-     * db.exec(query, setUTF("name")) instead of db.exec(query, "name")
+     * db.exec(query, Db.setUTF8("name")) instead of db.exec(query, "name")
      */
     public static byte[] setUTF8(String string) { return string.getBytes(UTF8); }
 }
