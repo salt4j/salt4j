@@ -1,5 +1,6 @@
 package salt4j;
 
+import java.io.IOException;
 import salt4j.core.Lazy;
 import java.nio.charset.Charset;
 import java.sql.Connection;
@@ -118,21 +119,21 @@ public class Db {
         return p.executeUpdate();
     }
 
-    private Lazy<ResultSet> lazyQuery(final PreparedStatement p) {
-        return new Lazy<ResultSet>() {
+    private Lazy.Result lazyQuery(final PreparedStatement p) {
+        return new Lazy.Result() {
             public ResultSet compute() throws SQLException {
                 dirty = true; updateLastActive();
                 p.executeQuery(); return p.getResultSet();
             }
         };
     }
-    public Lazy<ResultSet> lazyQuery(String sql, Object... params) throws SQLException {
+    public Lazy.Result lazyQuery(String sql, Object... params) throws SQLException {
         final PreparedStatement p = getPreparedStatement(sql);
         setParams(p, params);
         return lazyQuery(p);
     }
 
-    public Lazy<ResultSet> lazyQuery(String sql, List<Object> params) throws SQLException {
+    public Lazy.Result lazyQuery(String sql, List<Object> params) throws SQLException {
         final PreparedStatement p = getPreparedStatement(sql);
         setParams(p, params);
         return lazyQuery(p);
@@ -170,21 +171,24 @@ public class Db {
             return db;
         }
 
-        public Lazy<Db> lazyTake() {
-            return new Lazy<Db>() {
+        public Lazy.DB lazyTake() {
+            return new Lazy.DB() {
                 public Db compute() throws SQLException { return take(); }
             };
         }
 
         /** Return the database connection to pool and commit it if necessary. */
-        public synchronized void putBack (Db db) throws SQLException {
-            db.rollback(); // a no-op if the transaction was committed
+        public synchronized void putBack (Db db) {
+            // a no-op if the transaction was committed
+            try { db.rollback(); } 
+            catch (SQLException e) { e.printStackTrace(); } //we'll get another chance to handle this.
+
             connections.add(db); if (connections.size() <= 1) this.notify();
         }
 
         /** Return the database connection if and only if one was taken. */
-        public void putBack (Lazy<Db> db) throws SQLException {
-            if (db.computed()) putBack(db.get());
+        public void putBack (Lazy.DB db) {
+            if (db.computed()) putBack(db.getIfSet());
         }
     }
     static Charset UTF8 = Charset.forName("UTF-8");
