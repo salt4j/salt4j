@@ -22,7 +22,9 @@ public class TmLock {
         boolean waitForSet = false;
         final long giveUpTime = System.currentTimeMillis() + 250;
         for(int i = 0; System.currentTimeMillis() < giveUpTime ; i++) {
-            boolean success = l.tryLock(); // try to get an immediate lock
+            boolean success = false;
+            for (int j=0; j<1; j++) if ((success = l.tryLock()) == true) break;
+
             if (success) {
                 if (isWriteLock) writeLockAcquisitions ++; // need not be an atomicinteger (wlock guarantee)
                 ThreadDB.registerLock(this);
@@ -34,7 +36,7 @@ public class TmLock {
             } else {
                 boolean b;
                 synchronized(DEADLOCK) {
-                    if (!waitForSet) ThreadDB.setMyWaitFor(this);
+                    if (!waitForSet) { ThreadDB.setMyWaitFor(this); DEADLOCK.notify(); }
                     b = deadLocked(new HashSet<Long>(), Thread.currentThread().getId());
                     if (b) { System.out.print("."); System.out.flush(); break; } //deadlock!
                     else try { DEADLOCK.wait(); } catch (Exception e){} //no deadlock
@@ -48,7 +50,6 @@ public class TmLock {
     /** Failed to acquire this lock.  */
     boolean deadLocked(HashSet<Long> alreadyChecked, Long currentThread) {
         synchronized(DEADLOCK) {
-            DEADLOCK.notify();
             HashSet<Long> threadsImWaitingFor = new HashSet<Long>();
             synchronized(owners) {
                 for(Long idThread: owners) {
@@ -70,6 +71,7 @@ public class TmLock {
             for (TmLock tm : locksTheyWant) {
                 if (tm.deadLocked(alreadyChecked, currentThread)) return true;
             }
+            DEADLOCK.notify();
             return false;
         }
     }
@@ -80,7 +82,7 @@ public class TmLock {
         if (nWriteLocks > 0) if (nWriteLocks == 1) rw.writeLock().unlock(); else throw new Error();
         final int nReadLocks = rw.getReadHoldCount();
         if (nReadLocks > 0) if (nReadLocks == 1) rw.readLock().unlock(); else throw new Error();
-        synchronized(DEADLOCK) { synchronized(owners) { owners.clear(); } DEADLOCK.notifyAll(); }
+        synchronized(DEADLOCK) { synchronized(owners) { owners.clear(); } DEADLOCK.notify(); }
     }
 
     private final void upgradeLock() {
@@ -155,6 +157,7 @@ public class TmLock {
             Long threadId = Thread.currentThread().getId();
             synchronized(DEADLOCK) {
                 synchronized (WAITFOR) { WAITFOR.put(threadId, lock); }
+                DEADLOCK.notify();
             }
         }
 
@@ -162,6 +165,7 @@ public class TmLock {
             Long threadId = Thread.currentThread().getId();
             synchronized(DEADLOCK) {
                 synchronized (WAITFOR) { WAITFOR.remove(threadId); }
+                DEADLOCK.notify();
             }
         }
     }
