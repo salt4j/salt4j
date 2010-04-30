@@ -53,9 +53,9 @@ public class TmCache<K, V> implements Cache<K, V> {
         final int i = getIndex(key);
         locks[i].write();
         gc(queues[i], maps[i]);
-        maps[i].put(key, new CacheRef<K, V>(key, value, queues[i]));
-        TmLock.addToUndoLog(new Runnable() {
-            public void run() { maps[i].remove(key); }
+        final CacheRef<K,V> formerRef = maps[i].put(key, new CacheRef<K, V>(key, value, queues[i]));
+        if (formerRef != null) TmLock.addToUndoLog(new Runnable() {
+            public void run() { maps[i].put(key, formerRef); }
         });
     }
 
@@ -73,4 +73,5 @@ public class TmCache<K, V> implements Cache<K, V> {
     public void writeLock(K key) { locks[getIndex(key)].write(); }
 
     public static void commit() { TmLock.commit(); }
+    public static void rollback() { TmLock.rollback(); }
 }
