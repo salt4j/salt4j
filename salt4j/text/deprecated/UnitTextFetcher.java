@@ -1,10 +1,11 @@
-package salt4j.text;
+package salt4j.text.deprecated;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import salt4j.text.HtmlWriter;
-import salt4j.cache.UnitCache;
+import salt4j.cache.deprecated.UnitCache;
 import salt4j.core.Factory;
+import salt4j.text.HtmlWriter;
 
 abstract public class UnitTextFetcher<E extends HtmlWriter> {
     public static transient boolean disableAll = false;

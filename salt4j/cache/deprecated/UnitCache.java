@@ -1,4 +1,4 @@
-package salt4j.cache;
+package salt4j.cache.deprecated;
 
 /** Cache a single value. The main benefit is the proper synchronization. */
 public class UnitCache<V> {

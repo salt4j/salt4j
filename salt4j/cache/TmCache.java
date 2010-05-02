@@ -1,9 +1,10 @@
-package salt4j.cache.acid;
+package salt4j.cache;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import salt4j.cache.Cache;
+import salt4j.tm.TmLock;
 
 public class TmCache<K, V> implements Cache<K, V> {
     private final static class CacheRef<K,V> extends SoftReference<V> {
@@ -30,7 +31,7 @@ public class TmCache<K, V> implements Cache<K, V> {
         this.concurrency = concurrency;
     }
 
-    private int getIndex(K key) { return (key.hashCode() & 0x8FFFFFF) % concurrency; }
+    private int getIndex(K key) { return (key.hashCode() & 0x8FFFFFF) % concurrency; } //lost 1 bit?
 
     private final void gc(ReferenceQueue refq, HashMap map) {
         CacheRef<K,V> ref;
@@ -64,7 +65,6 @@ public class TmCache<K, V> implements Cache<K, V> {
         locks[i].write();
         gc(queues[i], maps[i]);
         final CacheRef<K,V> formerRef = maps[i].remove(key);
-        //don't roll back evictions: not necessary
         if (formerRef != null) TmLock.addToUndoLog(new Runnable() {
             public void run() { maps[i].put(key, formerRef); }
         });

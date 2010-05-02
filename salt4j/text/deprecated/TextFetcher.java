@@ -1,8 +1,8 @@
-package salt4j.text.acid;
+package salt4j.text.deprecated;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import salt4j.cache.acid.TmCache;
+import salt4j.cache.TmCache;
 import salt4j.core.Factory;
 import salt4j.text.HtmlWriter;
 

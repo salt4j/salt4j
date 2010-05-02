@@ -7,14 +7,12 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringEscapeUtils;
-import salt4j.cache.HashCache;
 
 /**
  * Write buffer some unicode text and write it to the web.  Provides simple formatting.
  */
 public class HtmlWriter {
     protected final static Charset UTF8 = Charset.forName("UTF-8");
-    protected final static HashCache<String, byte[]> viewCache = new HashCache<String, byte[]>();
 
     final ByteArrayOutputStream bytes = new ByteArrayOutputStream(1024);
     final Writer writer = new OutputStreamWriter(bytes, UTF8);

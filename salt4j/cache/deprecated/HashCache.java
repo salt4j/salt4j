@@ -1,8 +1,9 @@
-package salt4j.cache;
+package salt4j.cache.deprecated;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
+import salt4j.cache.Cache;
 
 public class HashCache<K, V> implements Cache<K, V> {
     private static class CacheRef<K,V> extends SoftReference<V> {
